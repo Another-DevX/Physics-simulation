@@ -55,28 +55,37 @@ impl Scene for LorenzAttractor {
         }
 
         if let Some((_, ref sol)) = self.solutions {
-            if self.current_index < sol.len() {
-                self.current_index += 1 + (ctx.simulation_speed  * 10.) as usize;
+            if (self.current_index + 1 + (ctx.simulation_speed * 10.) as usize) < sol.len() {
+                self.current_index += 1 + (ctx.simulation_speed * 10.) as usize;
+            } else {
+                self.current_index = sol.len() - 1
             }
         }
     }
 
     fn render(&mut self, _ctx: &GlobalContext, canvas: &mut Canvas<Window>) {
         if let Some((_, ref solutions)) = self.solutions {
-            // Configurar color para los puntos
             canvas.set_draw_color(sdl2::pixels::Color::RGB(255, 255, 255));
 
-            // Dimensiones del viewport
             let (width, height) = canvas.output_size().unwrap_or((800, 600));
+            let total_points = solutions.len();
 
-            for (i, state) in solutions.iter().enumerate() {
-                if i >= self.current_index {
-                    break;
-                }
-                let x = (state[0] * 10.0 + width as f32 / 2.0) as i32;
-                let y = (state[1] * 10.0 + height as f32 / 2.0) as i32;
+            for i in 1..self.current_index {
+                let prev = &solutions[i - 1];
+                let curr = &solutions[i];
 
-                let _ = canvas.draw_point((x, y));
+                let x1 = (prev[0] * 10.0 + width as f32 / 2.0) as i32;
+                let y1 = (prev[1] * 10.0 + height as f32 / 2.0) as i32;
+
+                let x2 = (curr[0] * 10.0 + width as f32 / 2.0) as i32;
+                let y2 = (curr[1] * 10.0 + height as f32 / 2.0) as i32;
+
+                let t = i as f32 / total_points as f32; 
+                let r = (255.0 * (1.0 - t)) as u8; 
+                let g = (255.0 * t) as u8;
+
+                canvas.set_draw_color(sdl2::pixels::Color::RGB(r, g, 0));
+                let _ = canvas.draw_line((x1, y1), (x2, y2));
             }
         }
     }
