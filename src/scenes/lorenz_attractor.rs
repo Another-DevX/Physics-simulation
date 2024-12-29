@@ -164,9 +164,9 @@ impl Scene for LorenzAttractor {
             }
             Event::MouseWheel { y, .. } => {
                 if *y > 0 {
-                    self.zoom *= 1.1; // Incrementar zoom
+                    self.zoom *= 1.1; 
                 } else if *y < 0 {
-                    self.zoom *= 0.9; // Reducir zoom
+                    self.zoom *= 0.9; 
                 }
             }
             _ => {}

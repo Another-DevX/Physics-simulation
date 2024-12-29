@@ -59,7 +59,7 @@ impl Engine {
         })
     }
 
-    pub fn run<S: Scene>(&mut self, scene: &mut S) {
+    pub fn run<S: Scene + ?Sized>(&mut self, scene: &mut S) {
         'running: loop {
             for event in self.event_pump.poll_iter() {
                 if let Event::Quit { .. } = event {
