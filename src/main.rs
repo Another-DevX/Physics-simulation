@@ -8,8 +8,8 @@ use scenes::particle_collisions::ParticleCollisionScene;
 use scenes::lorenz_attractor::LorenzAttractor;
 
 fn main() -> Result<(), String> {
-    const WINDOW_WIDTH: u32 = 1080;
-    const WINDOW_HEIGHT: u32 = 720;
+    const WINDOW_WIDTH: u32 = 2440;
+    const WINDOW_HEIGHT: u32 = 2160;
     let window_title = "Particle Simulation in Rust";
 
     let mut engine = Engine::new(window_title, WINDOW_WIDTH, WINDOW_HEIGHT)?;
