@@ -12,6 +12,8 @@ pub trait Scene {
 pub struct GlobalContext {
     pub simulation_speed: f32,
     pub paused: bool,
+    pub screen_width: u32,
+    pub screen_height: u32,
 }
 
 pub struct Engine {
@@ -44,6 +46,8 @@ impl Engine {
         let global_context = GlobalContext {
             paused: false,
             simulation_speed: 1.0,
+            screen_height: height,
+            screen_width: width
         };
 
         Ok(Engine {

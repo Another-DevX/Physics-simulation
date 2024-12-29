@@ -1,12 +1,11 @@
 use crate::engine::{GlobalContext, Scene};
 use crate::models::particle::Particle;
+use sdl2::gfx::primitives::DrawRenderer;
 use sdl2::{event::Event, keyboard::Keycode, render::Canvas, video::Window};
 
 use rand::Rng;
 
 pub struct ParticleCollisionScene {
-    pub width: u32,
-    pub height: u32,
     pub done: bool,
     pub particles: Vec<Particle>,
     pub enable_traces: bool,
@@ -17,16 +16,14 @@ pub struct ParticleCollisionScene {
 }
 
 impl ParticleCollisionScene {
-    pub fn new(width: u32, height: u32) -> Self {
+    pub fn new(ctx: &GlobalContext) -> Self {
         let cell_size = 25;
-        let grid_cols = (width / cell_size) + 1;
-        let grid_rows = (height / cell_size) + 1;
+        let grid_cols = (ctx.screen_width / cell_size) + 1;
+        let grid_rows = (ctx.screen_height / cell_size) + 1;
 
         // Grid 3D = [col][row] -> Vec<indices>
         let grid = vec![vec![Vec::<usize>::new(); grid_rows as usize]; grid_cols as usize];
         ParticleCollisionScene {
-            width,
-            height,
             done: false,
             particles: Vec::new(),
             enable_traces: true,
@@ -187,7 +184,7 @@ impl Scene for ParticleCollisionScene {
             self.assign_particles_to_grid();
             self.check_collisions();
             for p in &mut self.particles {
-                p.update(real_dt, self.width, self.height, self.enable_traces);
+                p.update(real_dt, ctx.screen_width, ctx.screen_height, self.enable_traces);
             }
         }
     }
@@ -196,6 +193,18 @@ impl Scene for ParticleCollisionScene {
         for particle in &self.particles {
             particle.render(canvas, self.enable_traces);
         }
+
+        let particle_count = self.particles.len();
+        let text = format!("Total particles: {}", particle_count);
+        let x: i16 = 10;
+        let y: i16 = 10;
+
+        let r = 255;
+        let g = 255;
+        let b = 255;
+        let a = 255;
+
+        let _ = canvas.string(x, y, &text, (r, g, b, a));
     }
 
     fn handle_event(&mut self, ctx: &mut GlobalContext, event: &Event) {
@@ -225,8 +234,8 @@ impl Scene for ParticleCollisionScene {
                 Keycode::T => self.enable_traces = !self.enable_traces,
                 Keycode::N => {
                     let mut rng = rand::thread_rng();
-                    let px = rng.gen_range(0..self.width) as f32;
-                    let py = rng.gen_range(0..self.height) as f32;
+                    let px = rng.gen_range(0..ctx.screen_width) as f32;
+                    let py = rng.gen_range(0..ctx.screen_height) as f32;
                     let vx = (rng.gen_range(-200..200) as f32) / 1.5;
                     let vy = (rng.gen_range(-200..200) as f32) / 1.5;
                     let radius = 10;
