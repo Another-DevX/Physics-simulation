@@ -2,6 +2,7 @@ use crate::engine::{GlobalContext, Scene};
 use crate::models::particle::Particle;
 use sdl2::gfx::primitives::DrawRenderer;
 use sdl2::{event::Event, keyboard::Keycode, render::Canvas, video::Window};
+use sdl2::keyboard::Mod;
 
 use rand::Rng;
 
@@ -184,7 +185,12 @@ impl Scene for ParticleCollisionScene {
             self.assign_particles_to_grid();
             self.check_collisions();
             for p in &mut self.particles {
-                p.update(real_dt, ctx.screen_width, ctx.screen_height, self.enable_traces);
+                p.update(
+                    real_dt,
+                    ctx.screen_width,
+                    ctx.screen_height,
+                    self.enable_traces,
+                );
             }
         }
     }
@@ -209,7 +215,9 @@ impl Scene for ParticleCollisionScene {
 
     fn handle_event(&mut self, ctx: &mut GlobalContext, event: &Event) {
         if let Event::KeyDown {
-            keycode: Some(k), ..
+            keycode: Some(k),
+            keymod,
+            ..
         } = event
         {
             match k {
@@ -234,12 +242,20 @@ impl Scene for ParticleCollisionScene {
                 Keycode::T => self.enable_traces = !self.enable_traces,
                 Keycode::N => {
                     let mut rng = rand::thread_rng();
-                    let px = rng.gen_range(0..ctx.screen_width) as f32;
-                    let py = rng.gen_range(0..ctx.screen_height) as f32;
-                    let vx = (rng.gen_range(-200..200) as f32) / 1.5;
-                    let vy = (rng.gen_range(-200..200) as f32) / 1.5;
-                    let radius = 10;
-                    self.particles.push(Particle::new(px, py, vx, vy, radius))
+                    let num_particles =
+                        if keymod.contains(Mod::LSHIFTMOD) || keymod.contains(Mod::RSHIFTMOD) {
+                            100
+                        } else {
+                            1
+                        };
+                    for _ in 0..num_particles {
+                        let px = rng.gen_range(0..ctx.screen_width) as f32;
+                        let py = rng.gen_range(0..ctx.screen_height) as f32;
+                        let vx = (rng.gen_range(-200..200) as f32) / 1.5;
+                        let vy = (rng.gen_range(-200..200) as f32) / 1.5;
+                        let radius = 10;
+                        self.particles.push(Particle::new(px, py, vx, vy, radius));
+                    }
                 }
                 _ => {}
             }
