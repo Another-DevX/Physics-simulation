@@ -1,14 +1,15 @@
-pub fn rk42nd_order<F>(
+pub fn rk42nd_order<FG, FO>(
     a: f32,
     b: f32,
     gamma0: f32,
     omega0: f32,
-    fgamma: F,
-    fomega: F,
+    fgamma: FG,
+    fomega: FO,
     n: u32,
 ) -> (Vec<f32>, Vec<f32>, Vec<f32>)
 where
-    F: Fn(f32, f32, f32) -> f32,
+    FG: Fn(f32, f32, f32) -> f32,
+    FO: Fn(f32, f32, f32) -> f32,
 {
     let h = (b - a) / n as f32;
     let mut omega = vec![omega0];
