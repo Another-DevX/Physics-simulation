@@ -57,8 +57,27 @@ impl Pendulum {
 }
 
 impl Scene for Pendulum {
-    fn handle_event(&mut self, _ctx: &mut GlobalContext, _event: &Event) {
-        // Handle events here
+    fn handle_event(&mut self, ctx: &mut GlobalContext, event: &Event) {
+        match event {
+            Event::KeyDown {
+                keycode: Some(k),
+                ..
+            } => {
+                match k {
+                    Keycode::R => {
+                        self.current_index = 0;
+                    }
+                    Keycode::Left => {
+                        ctx.simulation_speed -= 0.1;
+                    }
+                    Keycode::Right => {
+                        ctx.simulation_speed += 0.1;
+                    }
+                    _ => {}
+                }
+            }
+            _ => {}
+        } 
     }
 
     fn update(&mut self, ctx: &mut GlobalContext, _dt: f32) {
