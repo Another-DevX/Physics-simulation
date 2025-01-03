@@ -3,7 +3,7 @@ INCLUDE_DIR = include
 SRC = main.cpp engine.cpp scenes/lorenz_attractor.cpp utils/rk4.cpp
 TARGET_WASM_DIR = target/wasm
 TARGET_NATIVE_DIR = target
-TARGET_WASM = $(TARGET_WASM_DIR)/engine.html
+TARGET_WASM = $(TARGET_WASM_DIR)/lorenz.html
 TARGET_NATIVE = $(TARGET_NATIVE_DIR)/lorenz
 
 # Flags para WebAssembly

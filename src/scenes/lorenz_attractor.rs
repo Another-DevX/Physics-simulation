@@ -1,6 +1,5 @@
 use crate::engine::{GlobalContext, Scene};
 use crate::utils::RK4::rk4;
-use sdl2::sys::KeyCode;
 use sdl2::{event::Event, keyboard::Keycode};
 use sdl2::{render::Canvas, video::Window};
 
@@ -33,7 +32,7 @@ impl LorenzAttractor {
         lorenz_attractor
     }
 
-    fn lorenz(&self, _t: f32, state: &[f32; 3]) -> [f32; 3] {
+    fn lorenz(&self, _t: f32, state: &[f32]) -> [f32; 3] {
         let (x, y, z) = (state[0], state[1], state[2]);
         let x_dot = self.sigma * (y - x);
         let y_dot = x * (self.rho - z) - y;
@@ -45,7 +44,7 @@ impl LorenzAttractor {
         let r0 = [0.0, 1.0, 1.05];
         let (a, b) = (0.0, 50.0);
         let n: u32 = 10000;
-        let solutions = rk4(a, b, r0, |t, state| self.lorenz(t, state), n);
+        let solutions = rk4(a, b, r0.to_vec(), |t, state| self.lorenz(t, state).to_vec(), n);
         for value in &solutions.1 {
             print!("Solution x:{}, y:{}, z:{} \n", value[0], value[1], value[2]);
         }
